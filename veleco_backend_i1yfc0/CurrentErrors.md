@@ -1,3 +1,8 @@
+# Error Category
+- TS2834 / TS2835 Errors (Import Path Issues)
+- TS7006 Errors (Implicit Any Types)
+------------------------------------
+## BUILD LOG SOURCE:
 20:52:09.437 api/index.ts(3,18): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/roles/user.js'?
 20:52:09.439 api/index.ts(4,19): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/roles/admin.js'?
 20:52:09.440 api/index.ts(5,20): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/roles/seller.js'?
@@ -160,4 +165,5 @@
 20:52:09.503 utils/cartUtils.ts(17,41): error TS7006: Parameter 'sum' implicitly has an 'any' type.
 20:52:09.504 utils/cartUtils.ts(17,46): error TS7006: Parameter 'item' implicitly has an 'any' type.
 20:52:09.507 Error: Command "bun run vercel-build" exited with 2
+
 
