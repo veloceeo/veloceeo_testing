@@ -1,0 +1,1060 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model user {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  name       String?
+  phone      String
+  created_At DateTime?
+  cart       cart[]
+  pincode    String?
+  latitude   Float?
+  longitude  Float?
+  order orders[]
+  store_reviews store_review[]
+  seller_sessions       seller_session[]
+  support_tickets       support_ticket[]
+  session session[]
+  type  String @default("USER")
+}
+ model admin{
+  id Int @default(autoincrement())
+  first_name String
+  last_name String
+  email String @unique
+  password String
+  type  String @default("ADMIN")
+  is_active Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  phone String?
+ }
+
+model session {
+  id Int @default(autoincrement())
+  session_date DateTime @default(now())
+  last_activity DateTime @default(now())
+  is_active Boolean @default(true)
+  user_id Int 
+  user user @relation(fields: [user_id], references: [id])
+  @@id([id])
+}
+
+model store {
+  id           Int         @id @default(autoincrement())
+  name         String
+  address      String
+  phone        String
+  email        String      @unique
+  created_At   DateTime    @default(now())
+  updated_At   DateTime    @updatedAt
+  user_id      Int
+  pan_number   String      @unique
+  adhar_number String      @unique
+  gst_number   String      @unique
+  store_open   DateTime?   @default(now())
+  store_close  DateTime?   @default(now())
+  store_status StoreStatus @default(open)
+  store_type   StoreType   @default(retail)
+  seller_id     Int
+  seller seller @relation(fields: [seller_id],references: [id])
+  cart         cart[]
+  product      product[]
+  longitude    Float
+  latitude     Float
+  order orders[]
+  seller_analytics seller_analytics[]
+  sales_reports sales_report[]
+  earnings_reports earnings_report[]
+  store_performance store_performance?
+  store_hours store_hours[]
+  inventory_alerts inventory_alert[]
+  store_reviews store_review[]
+  settlements    seller_settlement[]
+  payments       seller_payment[]
+  balance        seller_balance[]
+  notifications  seller_notification[]
+  notification_preferences seller_notification_preferences[]
+  open  StoreOpenStatus @default(OPEN)
+  store_staff  store_staff[] // Added relation field for store staff
+  bank seller_bank_account[]
+  support_tickets support_ticket[]
+}
+
+enum StoreOpenStatus {
+  OPEN
+  CLOSED
+}
+
+enum StoreStatus {
+ open
+  closed
+}
+
+enum StoreType {
+  retail
+  wholesale
+  online
+  other
+}
+
+model cart {
+  id           Int         @id @default(autoincrement())
+  user_id      Int
+  user         user        @relation(fields: [user_id], references: [id])
+  store_id     Int
+  store        store       @relation(fields: [store_id], references: [id])
+  status       CartStatus  @default(active)
+  total_amount Int         @default(0)
+  created_At   DateTime    @default(now())
+  updated_At   DateTime    @updatedAt
+  cart_items   cart_item[]
+}
+
+model cart_item {
+  id            Int      @id @default(autoincrement())
+  cart_id       Int
+  product_id    Int
+  quantity      Int      @default(1)
+  price_at_time Int
+  created_At    DateTime @default(now())
+  updated_At    DateTime @updatedAt
+  cart    cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([cart_id, product_id]) // Prevent duplicate products in same cart
+}
+
+model product {
+  id           Int         @id @default(autoincrement())
+  product_name String
+  price        Int
+  product_img  String[]
+  quantity     Int
+  category     String
+  stock        Int
+  store_id     Int
+  store        store       @relation(fields: [store_id], references: [id])
+  cart_items   cart_item[]
+  latitude     Float
+  order order_item[]
+  best_selling_reports sales_report[]
+  worst_selling_reports sales_report[] @relation("WorstSellingProduct")
+  inventory_alerts inventory_alert[]
+  notifications seller_notification[] // Added relation field for notifications
+}
+
+model add_on_value{
+  id Int @id @default(autoincrement())
+  categries_type String
+  range String
+  add_on Int
+  percentage Float
+}
+
+enum CartStatus {
+  active
+  ordered
+  abandoned
+}
+
+// orders Schema
+model orders {
+  id            Int         @id @default(autoincrement())
+  user_id       Int
+  user          user        @relation(fields: [user_id], references: [id])
+  store_id      Int
+  store         store       @relation(fields: [store_id], references: [id])
+  total_amount  Int
+  status        OrderStatus @default(PENDING)
+  tracking_link String?
+  placed_at     DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  order_items   order_item[]
+  store_reviews store_review[] @relation("OrderStoreReviews")
+  settlement_details settlement_detail[] // Added relation field for settlement_detail
+  notifications seller_notification[] // Added relation field for notifications
+}
+
+model order_item {
+  id         Int      @id @default(autoincrement())
+  order_id   Int
+  order      orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product_id Int
+  product    product  @relation(fields: [product_id], references: [id])
+  quantity   Int
+  price      Int      // price at the time of order
+}
+
+enum OrderStatus {
+  PENDING          // Awaiting store approval
+  ACCEPTED         // Store accepted
+  REJECTED         // Store rejected
+  READY            // Store marked ready
+  OUT_FOR_DELIVERY // Sent to delivery company
+  DELIVERED        // Delivered to customer
+  CANCELLED
+}
+
+// ========== SELLER DASHBOARD SCHEMA ==========
+
+model seller {
+  id Int @id @default(autoincrement())
+  seller_name String
+  seller_email String  @unique
+  seller_password String
+  seller_image String?
+  seller_phone String
+  seller_address String?
+  seller_latitude Float?
+  seller_longitude Float?
+  type String @default("seller")
+  store store[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  business_license String?
+  tax_id String?
+  is_verified Boolean @default(false)
+  verification_date DateTime?
+  dashboard_analytics seller_analytics[]
+  sales_reports sales_report[]
+  earnings_reports earnings_report[]
+  settlements    seller_settlement[]
+  payments       seller_payment[]
+  balance        seller_balance[]
+  notifications  seller_notification[]
+  notification_preferences seller_notification_preferences[]
+  staff_members         store_staff[]
+  staff_created         store_staff[] @relation("StaffCreatedBy")
+  bank_accounts         seller_bank_account[]
+  profile_updates       seller_profile_update[]
+  sessions              seller_session[]
+  support_tickets       support_ticket[]
+  seller_cap  seller_caps[] 
+}
+
+
+model seller_caps{
+  id Int @id @default(autoincrement())
+  daily_order String 
+  tier String 
+  subscription_type Int
+  seller_id  Int 
+  seller_caps  seller @relation(fields: [seller_id] , references: [id])
+}
+
+// Seller Dashboard Analytics - Tracks daily performance metrics
+model seller_analytics {
+  id Int @id @default(autoincrement())
+  seller_id Int
+  seller seller @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store_id Int
+  store store @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  date DateTime @default(now())
+  daily_sales_amount Int @default(0)          // Today's total sales
+  daily_orders_count Int @default(0)          // Number of orders today
+  daily_revenue Int @default(0)               // Revenue after costs
+  total_products_sold Int @default(0)         // Products sold today
+  total_customers_served Int @default(0)      // Unique customers today
+  average_order_value Float @default(0.0)     // AOV for today
+  inventory_count Int @default(0)             // Live inventory count
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([seller_id, store_id, date])
+}
+
+// Sales Reports for detailed analytics and reporting
+model sales_report {
+  id Int @id @default(autoincrement())
+  seller_id Int
+  seller seller @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store_id Int
+  store store @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  report_type ReportType @default(DAILY)
+  start_date DateTime
+  end_date DateTime
+  total_sales_amount Int
+  total_orders Int
+  total_products_sold Int
+  total_customers Int
+  best_selling_product_id Int?
+  best_selling_product product? @relation(fields: [best_selling_product_id], references: [id])
+  worst_selling_product_id Int?
+  worst_selling_product product? @relation("WorstSellingProduct", fields: [worst_selling_product_id], references: [id])
+  profit_margin Float @default(0.0)
+  return_rate Float @default(0.0)
+  customer_satisfaction_score Float?
+  peak_sales_hour String?                     // Hour with most sales (e.g., "14:00")
+  slowest_sales_hour String?                  // Hour with least sales
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  report_data Json?                           // Additional analytics data as JSON
+}
+
+// Comprehensive Earnings Report for advanced seller reporting
+model earnings_report {
+  id Int @id @default(autoincrement())
+  seller_id Int
+  seller seller @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store_id Int?
+  store store? @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  report_period ReportPeriod @default(DAILY)
+  start_date DateTime
+  end_date DateTime
+  
+  // Financial metrics
+  total_earnings Int @default(0)              // Total earnings for the period
+  gross_sales Int @default(0)                 // Total sales before deductions
+  total_deductions Int @default(0)            // Platform fees, taxes, etc.
+  net_earnings Int @default(0)                // Earnings after deductions
+  average_order_value Float @default(0.0)     // AOV for the period
+  
+  // Order metrics
+  total_orders Int @default(0)
+  completed_orders Int @default(0)
+  cancelled_orders Int @default(0)
+  returned_orders Int @default(0)
+  refunded_orders Int @default(0)
+  pending_orders Int @default(0)
+  
+  // Performance metrics
+  conversion_rate Float @default(0.0)         // Orders/views ratio
+  cancellation_rate Float @default(0.0)       // Cancelled/total orders
+  return_rate Float @default(0.0)             // Returns/completed orders
+  customer_acquisition_cost Float @default(0.0)
+  customer_lifetime_value Float @default(0.0)
+  
+  // Product metrics
+  total_products_sold Int @default(0)
+  unique_products_sold Int @default(0)
+  best_performing_category String?
+  worst_performing_category String?
+  
+  // Additional data
+  report_data Json?                           // Detailed breakdown data
+  export_urls Json?                           // URLs for PDF/CSV exports
+  
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  @@index([seller_id, start_date])
+  @@index([store_id, start_date])
+}
+
+enum ReportType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+}
+
+enum ReportPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+}
+
+enum ActionType {
+  PRODUCT_ADDED
+  PRODUCT_UPDATED
+  PRODUCT_DELETED
+  STORE_OPENED
+  STORE_CLOSED
+  STORE_SETTINGS_UPDATED
+  SALES_REPORT_GENERATED
+  INVENTORY_UPDATED
+  ORDER_STATUS_CHANGED
+  DISCOUNT_CREATED
+  PROMOTION_LAUNCHED
+  DASHBOARD_VIEWED
+  NOTIFICATION_READ
+}
+
+enum AlertType {
+  LOW_STOCK
+  OUT_OF_STOCK
+  HIGH_DEMAND
+  PRICE_CHANGE
+  EXPIRY_WARNING
+  QUALITY_ISSUE
+  REORDER_POINT
+}
+
+enum AlertPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  PROMOTION
+  ORDER_UPDATE
+  INVENTORY_ALERT
+  SYSTEM_UPDATE
+}
+
+// Inventory Alert Model
+model inventory_alert {
+  id           Int      @id @default(autoincrement())
+  product_id   Int
+  store_id     Int
+  alert_type   AlertType
+  priority     AlertPriority @default(MEDIUM)
+  message      String?
+  created_at   DateTime @default(now())
+  resolved     Boolean  @default(false)
+  resolved_at  DateTime?
+
+  product      product  @relation(fields: [product_id], references: [id])
+  store        store    @relation(fields: [store_id], references: [id])
+}
+
+// Store Hours Model
+// Store Hours Model
+model store_hours {
+  id        Int      @id @default(autoincrement())
+  store_id  Int
+  day       String   // e.g., "Monday", "Tuesday"
+  open_time String?  // e.g., "09:00" - made optional
+  close_time String? // e.g., "18:00" - made optional
+  is_closed Boolean  @default(false) // Add this field
+  store     store    @relation(fields: [store_id], references: [id])
+}
+
+// Store Review Model
+model store_review {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  store_id   Int
+  order_id   Int?
+  rating     Int      // e.g., 1-5 stars
+  comment    String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user  user  @relation(fields: [user_id], references: [id])
+  store store @relation(fields: [store_id], references: [id])
+  order orders? @relation("OrderStoreReviews", fields: [order_id], references: [id])
+}
+
+// Add this model after the store model (around line 66)
+model store_performance {
+  id                      Int      @id @default(autoincrement())
+  store_id                Int      @unique
+  store                   store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  total_lifetime_sales    Int      @default(0)
+  total_lifetime_orders   Int      @default(0)
+  total_customers         Int      @default(0)
+  average_rating          Float    @default(0.0)
+  total_reviews           Int      @default(0)
+  inventory_turnover_rate Float    @default(0.0)
+  last_sale_date          DateTime?
+  peak_hours              Json?
+  monthly_growth_rate     Float    @default(0.0)
+  customer_retention_rate Float    @default(0.0)
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+}
+
+
+// Add these enums first
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum SettlementStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  DISPUTED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  UPI
+  WALLET
+  CARD
+  CHEQUE
+}
+
+// Add these models after your existing models
+model seller_settlement {
+  id                      Int             @id @default(autoincrement())
+  seller_id               Int
+  store_id                Int
+  settlement_period_start DateTime
+  settlement_period_end   DateTime
+  total_sales_amount      Float
+  platform_commission     Float
+  tax_deduction           Float
+  other_deductions        Float           @default(0)
+  net_settlement_amount   Float
+  status                  SettlementStatus @default(PENDING)
+  payment_method          PaymentMethod?
+  transaction_reference   String?
+  settled_at              DateTime?
+  created_at              DateTime        @default(now())
+  updated_at              DateTime        @updatedAt
+
+  seller                  seller          @relation(fields: [seller_id], references: [id])
+  store                   store           @relation(fields: [store_id], references: [id])
+  settlement_details      settlement_detail[]
+  seller_payments         seller_payment[]
+  notifications           seller_notification[] // Added relation field for notifications
+
+  @@index([seller_id])
+  @@index([store_id])
+  @@index([status])
+  @@index([settlement_period_start, settlement_period_end])
+}
+
+model settlement_detail {
+  id                Int      @id @default(autoincrement())
+  settlement_id     Int
+  order_id          Int
+  order_amount      Float
+  commission_rate   Float
+  commission_amount Float
+  tax_amount        Float    @default(0)
+  net_amount        Float
+  created_at        DateTime @default(now())
+
+  settlement        seller_settlement @relation(fields: [settlement_id], references: [id])
+  order             orders            @relation(fields: [order_id], references: [id])
+
+  @@index([settlement_id])
+  @@index([order_id])
+}
+
+model seller_payment {
+  id                  Int           @id @default(autoincrement())
+  seller_id           Int
+  store_id            Int
+  settlement_id       Int?
+  amount              Float
+  payment_method      PaymentMethod
+  status              PaymentStatus @default(PENDING)
+  transaction_reference String?
+  payment_date        DateTime?
+  due_date            DateTime
+  description         String?
+  failure_reason      String?
+  metadata            Json?
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+
+  seller              seller        @relation(fields: [seller_id], references: [id])
+  store               store         @relation(fields: [store_id], references: [id])
+  settlement          seller_settlement? @relation(fields: [settlement_id], references: [id])
+  notifications       seller_notification[] // Added relation field for notifications
+
+  @@index([seller_id])
+  @@index([store_id])
+  @@index([status])
+  @@index([due_date])
+  @@index([payment_date])
+}
+
+model seller_balance {
+  id                      Int      @id @default(autoincrement())
+  seller_id               Int      @unique
+  store_id                Int      @unique
+  pending_amount          Float    @default(0)
+  available_amount        Float    @default(0)
+  last_settlement_date    DateTime?
+  next_settlement_date    DateTime?
+  total_lifetime_earnings Float    @default(0)
+  total_withdrawals       Float    @default(0)
+  commission_rate         Float    @default(5.0)
+  updated_at              DateTime @updatedAt
+  seller                  seller   @relation(fields: [seller_id], references: [id])
+  store                   store    @relation(fields: [store_id], references: [id])
+
+  @@index([seller_id])
+  @@index([store_id])
+}
+
+// ============ NOTIFICATION SYSTEM SCHEMA ============
+
+// Notification types for seller alerts
+enum NotificationCategory {
+  ORDER
+  INVENTORY
+  PAYMENT
+  PROMOTION
+  SYSTEM
+  REVIEW
+  SETTLEMENT
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+  DISMISSED
+}
+
+// Main notification model for sellers
+model seller_notification {
+  id                Int                    @id @default(autoincrement())
+  seller_id         Int
+  store_id          Int?                   // Optional - can be system-wide notifications
+  category          NotificationCategory
+  type              String                 // Specific type like "NEW_ORDER", "LOW_STOCK", etc.
+  title             String
+  message           String
+  priority          NotificationPriority   @default(MEDIUM)
+  status            NotificationStatus     @default(UNREAD)
+  
+  // Related entity references (optional)
+  related_order_id     Int?
+  related_product_id   Int?
+  related_payment_id   Int?
+  related_settlement_id Int?
+  
+  // Action data
+  action_url        String?               // URL for "View Details" action
+  action_data       Json?                 // Additional action data
+  
+  // Metadata
+  metadata          Json?                 // Additional notification data
+  expires_at        DateTime?             // For temporary notifications
+  read_at           DateTime?
+  dismissed_at      DateTime?
+  created_at        DateTime              @default(now())
+  updated_at        DateTime              @updatedAt
+
+  // Relations
+  seller            seller                @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store             store?                @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  related_order     orders?               @relation(fields: [related_order_id], references: [id])
+  related_product   product?              @relation(fields: [related_product_id], references: [id])
+  related_payment   seller_payment?       @relation(fields: [related_payment_id], references: [id])
+  related_settlement seller_settlement?   @relation(fields: [related_settlement_id], references: [id])
+  deliveries        notification_delivery[] // Added relation field for deliveries
+
+  @@index([seller_id])
+  @@index([store_id])
+  @@index([category])
+  @@index([status])
+  @@index([priority])
+  @@index([created_at])
+  @@index([expires_at])
+}
+
+// Notification preferences for sellers
+model seller_notification_preferences {
+  id                    Int      @id @default(autoincrement())
+  seller_id             Int      @unique
+  store_id              Int?     // Can be store-specific or global
+  
+  // Order notifications
+  notify_new_orders         Boolean @default(true)
+  notify_order_updates      Boolean @default(true)
+  notify_order_cancellations Boolean @default(true)
+  
+  // Inventory notifications
+  notify_low_stock          Boolean @default(true)
+  notify_out_of_stock       Boolean @default(true)
+  notify_stock_alerts       Boolean @default(true)
+  low_stock_threshold       Int     @default(10)
+  
+  // Payment notifications
+  notify_payment_updates    Boolean @default(true)
+  notify_payment_failures   Boolean @default(true)
+  notify_settlements        Boolean @default(true)
+  notify_withdrawals        Boolean @default(true)
+  
+  // Promotion notifications
+  notify_offer_requests     Boolean @default(true)
+  notify_promotion_updates  Boolean @default(true)
+  
+  // System notifications
+  notify_system_updates     Boolean @default(true)
+  notify_policy_changes     Boolean @default(false)
+  
+  // Review notifications
+  notify_new_reviews        Boolean @default(true)
+  notify_review_responses   Boolean @default(true)
+  
+  // Delivery preferences
+  email_notifications       Boolean @default(true)
+  sms_notifications         Boolean @default(false)
+  push_notifications        Boolean @default(true)
+  in_app_notifications      Boolean @default(true)
+  
+  // Quiet hours
+  quiet_hours_enabled       Boolean @default(false)
+  quiet_hours_start         String? // e.g., "22:00"
+  quiet_hours_end           String? // e.g., "08:00"
+  
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  seller                   seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store                    store?   @relation(fields: [store_id], references: [id], onDelete: Cascade)
+
+  @@index([seller_id])
+  @@index([store_id])
+}
+
+// Notification templates for consistent messaging
+model notification_template {
+  id              Int                    @id @default(autoincrement())
+  category        NotificationCategory
+  type            String                 // e.g., "NEW_ORDER", "LOW_STOCK"
+  title_template  String                 // e.g., "New Order #{{order_id}}"
+  message_template String                // e.g., "You have received a new order worth ₹{{amount}}"
+  priority        NotificationPriority   @default(MEDIUM)
+  is_active       Boolean                @default(true)
+  created_at      DateTime               @default(now())
+  updated_at      DateTime               @updatedAt
+
+  @@unique([category, type])
+  @@index([category])
+  @@index([is_active])
+}
+
+// Notification delivery tracking
+model notification_delivery {
+  id                    Int      @id @default(autoincrement())
+  notification_id       Int
+  delivery_method       String   // email, sms, push, in_app
+  delivery_status       String   // pending, sent, delivered, failed
+  delivery_provider     String?  // e.g., firebase, twilio, sendgrid
+  provider_message_id   String?
+  error_message         String?
+  delivered_at          DateTime?
+  created_at            DateTime @default(now())
+
+  notification          seller_notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+
+  @@index([notification_id])
+  @@index([delivery_status])
+}
+
+// Add these models after the existing notification models
+
+// Staff management for stores
+model store_staff {
+  id              Int      @id @default(autoincrement())
+  store_id        Int
+  seller_id       Int      // Owner of the store
+  staff_name      String
+  staff_email     String   @unique
+  staff_phone     String?
+  role            StaffRole @default(STAFF)
+  permissions     Json?    // Specific permissions as JSON
+  is_active       Boolean  @default(true)
+  hired_date      DateTime @default(now())
+  last_login      DateTime?
+  created_by      Int      // Seller ID who created this staff
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  store           store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  seller          seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  created_by_seller seller @relation("StaffCreatedBy", fields: [created_by], references: [id])
+
+  @@index([store_id])
+  @@index([seller_id])
+  @@index([staff_email])
+}
+
+enum StaffRole {
+  MANAGER
+  STAFF
+  CASHIER
+  INVENTORY_MANAGER
+}
+
+// Bank account management for sellers
+model seller_bank_account {
+  id                Int      @id @default(autoincrement())
+  seller_id         Int
+  store_id          Int?     // Optional - can be seller-wide
+  account_holder_name String
+  bank_name         String
+  account_number    String
+  ifsc_code         String
+  branch_name       String?
+  account_type      BankAccountType @default(SAVINGS)
+  is_primary        Boolean  @default(false)
+  is_verified       Boolean  @default(false)
+  verification_date DateTime?
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  seller            seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  store             store?   @relation(fields: [store_id], references: [id], onDelete: Cascade)
+
+  @@unique([seller_id, account_number]) // Prevent duplicate accounts
+  @@index([seller_id])
+  @@index([store_id])
+  @@index([is_primary])
+}
+
+enum BankAccountType {
+  SAVINGS
+  CURRENT
+  BUSINESS
+}
+
+// Seller profile updates tracking
+model seller_profile_update {
+  id              Int      @id @default(autoincrement())
+  seller_id       Int
+  field_name      String   // e.g., "phone", "business_license", etc.
+  old_value       String?
+  new_value       String?
+  update_reason   String?
+  requires_verification Boolean @default(false)
+  is_verified     Boolean  @default(false)
+  verified_at     DateTime?
+  verified_by     String?  // Admin ID or system
+  created_at      DateTime @default(now())
+
+  seller          seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+
+  @@index([seller_id])
+  @@index([field_name])
+  @@index([created_at])
+}
+
+// Session management for logout functionality
+model seller_session {
+  id              String   @id @default(uuid())
+  seller_id       Int
+  user_id         Int
+  device_info     String?
+  ip_address      String?
+  login_time      DateTime @default(now())
+  last_activity   DateTime @default(now())
+  expires_at      DateTime
+  is_active       Boolean  @default(true)
+  logout_time     DateTime?
+  logout_reason   String?  // manual, timeout, force_logout
+
+  seller          seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  user            user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([seller_id])
+  @@index([user_id])
+  @@index([expires_at])
+  @@index([is_active])
+}
+
+// ============ SUPPORT TICKET SYSTEM ============
+
+// Support ticket categories
+enum TicketCategory {
+  TECHNICAL_ISSUE
+  BILLING
+  ACCOUNT
+  PRODUCT
+  ORDER
+  PAYMENT
+  GENERAL
+  FEATURE_REQUEST
+  BUG_REPORT
+}
+
+// Ticket priority levels
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+// Ticket status
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_RESPONSE
+  RESOLVED
+  CLOSED
+  REOPENED
+}
+
+// Main support ticket model
+model support_ticket {
+  id                Int              @id @default(autoincrement())
+  ticket_number     String           @unique // Auto-generated: TKT-YYYY-XXXXXX
+  user_id           Int?             // Optional - can be anonymous
+  seller_id         Int?             // Optional - for seller-specific tickets
+  store_id          Int?             // Optional - for store-specific tickets
+  
+  // Ticket details
+  subject           String
+  description       String           @db.Text
+  category          TicketCategory
+  priority          TicketPriority   @default(MEDIUM)
+  status            TicketStatus     @default(OPEN)
+  
+  // Contact information (for anonymous tickets)
+  contact_name      String?
+  contact_email     String
+  contact_phone     String?
+  
+  // Ticket metadata
+  browser_info      String?
+  device_info       String?
+  ip_address        String?
+  user_agent        String?
+  page_url          String?          // URL where ticket was created
+  
+  // Assignment and tracking
+  assigned_to       String?          // Support agent ID/email
+  resolution        String?          @db.Text
+  resolution_date   DateTime?
+  
+  // File attachments
+  attachments       Json?            // Array of file URLs/paths
+  
+  // Timestamps
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  last_response_at  DateTime?
+  
+  // Relations
+  user              user?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  seller            seller?          @relation(fields: [seller_id], references: [id], onDelete: SetNull)
+  store             store?           @relation(fields: [store_id], references: [id], onDelete: SetNull)
+  responses         ticket_response[]
+  email_logs        ticket_email_log[]
+
+  @@index([ticket_number])
+  @@index([user_id])
+  @@index([seller_id])
+  @@index([store_id])
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([created_at])
+  @@index([contact_email])
+}
+
+// Ticket responses/comments
+model ticket_response {
+  id                Int              @id @default(autoincrement())
+  ticket_id         Int
+  
+  // Response details
+  message           String           @db.Text
+  is_internal       Boolean          @default(false) // Internal notes vs customer-facing
+  is_from_customer  Boolean          @default(false) // true if from customer, false if from support
+  
+  // Author information
+  author_type       String           // 'customer', 'support', 'system'
+  author_name       String?
+  author_email      String?
+  author_id         String?          // User ID or support agent ID
+  
+  // Attachments
+  attachments       Json?            // Array of file URLs/paths
+  
+  // Timestamps
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  
+  // Relations
+  ticket            support_ticket   @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+
+  @@index([ticket_id])
+  @@index([created_at])
+  @@index([is_from_customer])
+  @@index([author_type])
+}
+
+// Email notification logs for tickets
+model ticket_email_log {
+  id                Int              @id @default(autoincrement())
+  ticket_id         Int
+  
+  // Email details
+  email_type        String           // 'ticket_created', 'response_added', 'status_changed', etc.
+  recipient_email   String
+  recipient_name    String?
+  subject           String
+  body              String           @db.Text
+  
+  // Send status
+  status            String           @default("pending") // pending, sent, failed
+  sent_at           DateTime?
+  error_message     String?
+  
+  // Email service details
+  message_id        String?          // Email service message ID
+  provider          String?          // 'nodemailer', 'sendgrid', etc.
+  
+  // Timestamps
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  
+  // Relations
+  ticket            support_ticket   @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+
+  @@index([ticket_id])
+  @@index([email_type])
+  @@index([status])
+  @@index([recipient_email])
+  @@index([created_at])
+}
+
+// Support ticket templates for common issues
+model ticket_template {
+  id                Int              @id @default(autoincrement())
+  name              String
+  category          TicketCategory
+  subject_template  String
+  body_template     String           @db.Text
+  is_active         Boolean          @default(true)
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+
+  @@index([category])
+  @@index([is_active])
+}
