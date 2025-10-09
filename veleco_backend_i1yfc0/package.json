@@ -19,7 +19,8 @@
     "@vercel/edge-config": "^1.4.0",
     "@vercel/node": "^5.3.21",
     "@vercel/postgres": "^0.10.0",
-    "bcrypt": "^2.4.3",
+    "bcryptjs": "^2.4.3",
+    "bcrypt": "^5.1.1",
     "cloudinary": "^2.3.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -42,5 +43,6 @@
     "typescript": "^5.9.2"
   }
 }
+
 
 
