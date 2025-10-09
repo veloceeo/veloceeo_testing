@@ -1,15 +1,14 @@
-import type { VercelResponse, VercelRequest } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// CommonJS automatically provides __dirname
+// so no need for import.meta.url or fileURLToPath
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+
 // Map alternates to DATABASE_URL
 if (!process.env.DATABASE_URL && process.env.PRISMA_DATABASE_URL) {
   process.env.DATABASE_URL = process.env.PRISMA_DATABASE_URL;
@@ -22,53 +21,37 @@ if (!process.env.DATABASE_URL && process.env.NODE_ENV !== 'production') {
   process.env.DATABASE_URL = 'postgresql://postgres:password@localhost:5432/ecommerce';
 }
 
+// Import routes (CommonJS style)
+const user = require('./models/roles/user');
+const admin = require('./models/roles/admin');
+const seller = require('./models/roles/seller');
+const store = require('./models/store');
+const product = require('./models/products');
+const order = require('./models/orders');
+const cartItemsRouter = require('./models/cart_items');
+const sellerDashboard = require('./models/seller_dashboard');
+const sellerDashboardExtended = require('./models/seller_dashboard_extended');
+const paymentRoutes = require('./models/payment_routes');
+const notification = require('./models/notification_routes');
+const settingsManagementRoutes = require('./models/settings_management_routes');
+const cartRoutes = require('./models/cart');
+const supportRoutes = require('./support_ticket_routes');
+const sellerCap = require('./models/seller_cap');
+const percentageRouter = require('./models/percentage');
+
+// Initialize app
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: '*',
-  methods: 'GET, POST, PUT, DELETE, OPTIONS',
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  })
+);
 
-// Routes (dynamically import after env is loaded)
-// Using top-level await to ensure imports happen after dotenv config
-const [
-  { default: user },
-  { default: admin },
-  { default: seller },
-  { default: store },
-  { default: product },
-  { default: order },
-  { default: cartItemsRouter },
-  { default: sellerDashboard },
-  { default: sellerDashboardExtended },
-  { default: paymentRoutes },
-  { default: notification },
-  { default: settingsManagementRoutes },
-  { default: cartRoutes },
-  { default: supportRoutes },
-  { default: sellerCap },
-  { default: percentageRouter }
-] = await Promise.all([
-  import('./models/roles/user.js'),
-  import('./models/roles/admin.js'),
-  import('./models/roles/seller.js'),
-  import('./models/store.js'),
-  import('./models/products.js'),
-  import('./models/orders.js'),
-  import('./models/cart_items.js'),
-  import('./models/seller_dashboard.js'),
-  import('./models/seller_dashboard_extended.js'),
-  import('./models/payment_routes.js'),
-  import('./models/notification_routes.js'),
-  import('./models/settings_management_routes.js'),
-  import('./models/cart.js'),
-  import('./support_ticket_routes.js'),
-  import('./models/seller_cap.js'),
-  import('./models/percentage.js'),
-]);
-
+// Routes
 app.use('/api/user', user);
 app.use('/api/admin', admin);
 app.use('/api/store', store);
@@ -91,12 +74,12 @@ app.get('/hello', (req, res) => {
   res.json({ message: 'Veleco Backend API is running on Vercel!' });
 });
 
-// For local development
+// Local development
 if (process.env.NODE_ENV !== 'production') {
   app.listen(3000, () => {
     console.log('Server is running on port 3000');
-
   });
 }
 
+// Export for Vercel serverless functions
 export default app;
