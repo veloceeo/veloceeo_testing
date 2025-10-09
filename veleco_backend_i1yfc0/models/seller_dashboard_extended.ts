@@ -1,6 +1,6 @@
 import express from 'express';
-import { authSellerMiddleware } from './auth/middleware';
-import { PrismaClient } from '../db/generated/prisma';
+import { authSellerMiddleware } from './auth/middleware.js';
+import { PrismaClient } from '../db/generated/prisma.js';
 
 const prisma = new PrismaClient();
 const sellerDashboardExtended = express.Router();
@@ -719,5 +719,6 @@ sellerDashboardExtended.get("/actions/logs", authSellerMiddleware, async (req, r
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 export default sellerDashboardExtended;
