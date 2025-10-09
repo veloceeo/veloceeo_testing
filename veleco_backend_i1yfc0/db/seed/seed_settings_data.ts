@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '../generated/prisma.js';
 
 const prisma = new PrismaClient();
 
@@ -282,5 +282,6 @@ if (require.main === module) {
       process.exit(1);
     });
 }
+
 
 export default seedSettingsData;
