@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '../generated/prisma.js';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -1240,5 +1240,6 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
 
 export { seedSellerDashboard };
