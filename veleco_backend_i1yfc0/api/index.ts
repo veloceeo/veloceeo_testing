@@ -1,21 +1,21 @@
 import type { VercelResponse, VercelRequest } from '@vercel/node';
 import express from 'express';
-import user from '../models/roles/user';
-import admin from '../models/roles/admin';
-import seller from '../models/roles/seller';
-import store from '../models/store';
-import product from '../models/products';
-import order from '../models/orders';
-import cartItemsRouter from '../models/cart_items';
-import sellerDashboard from '../models/seller_dashboard';
-import sellerDashboardExtended from '../models/seller_dashboard_extended';
-import paymentRoutes from '../models/payment_routes';
-import notification from '../models/notification_routes';
-import settingsManagementRoutes from '../models/settings_management_routes';
-import cartRoutes from '../models/cart';
-import supportRoutes from '../support_ticket_routes';
-import sellerCap from '../models/seller_cap';
-import percentageRouter from '../models/percentage';
+import user from '../models/roles/user.js';
+import admin from '../models/roles/admin.js';
+import seller from '../models/roles/seller.js';
+import store from '../models/store.js';
+import product from '../models/products.js';
+import order from '../models/orders.js';
+import cartItemsRouter from '../models/cart_items.js';
+import sellerDashboard from '../models/seller_dashboard.js';
+import sellerDashboardExtended from '../models/seller_dashboard_extended.js';
+import paymentRoutes from '../models/payment_routes.js';
+import notification from '../models/notification_routes.js';
+import settingsManagementRoutes from '../models/settings_management_routes.js';
+import cartRoutes from '../models/cart.js';
+import supportRoutes from '../support_ticket_routes.js';
+import sellerCap from '../models/seller_cap.js';
+import percentageRouter from '../models/percentage.js';
 
 const app = express();
 
@@ -55,4 +55,5 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Export for Vercel
+
 export default app;
