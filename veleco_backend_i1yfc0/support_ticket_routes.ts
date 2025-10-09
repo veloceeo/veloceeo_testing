@@ -9,8 +9,8 @@ import {
   getTicketTemplates,
   createTicketTemplate,
   getTicketEmailLogs
-} from './support_ticket_api';
-import { authAdminMiddleware } from './models/auth/middleware';
+} from './support_ticket_api.js';
+import { authAdminMiddleware } from './models/auth/middleware.js';
    
 const router = Router();
 
@@ -136,5 +136,6 @@ router.get('/', (req, res) => {
     statuses: ['OPEN', 'IN_PROGRESS', 'WAITING_FOR_RESPONSE', 'RESOLVED', 'CLOSED', 'REOPENED']
   });
 });
+
 
 export default router;
