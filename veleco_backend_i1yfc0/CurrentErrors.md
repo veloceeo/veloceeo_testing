@@ -30,8 +30,8 @@
 
 ### 1. Module Not Found / Import Errors
 - `Cannot find module '../generated/prisma.js'`  
-  Files affected: `db/seed/seed_notification_data.ts`, `db/seed/seed_seller_dashboard.ts`, `db/seed/seed_settings_data.ts`, `db/seed/seed_support_ticket_data.ts`, `models/seller_dashboard.ts`, `models/seller_dashboard_extended.ts`
-  Fixed :
+  -- Files affected: `db/seed/seed_notification_data.ts`, `db/seed/seed_seller_dashboard.ts`, `db/seed/seed_settings_data.ts`, `db/seed/seed_support_ticket_data.ts`, `models/seller_dashboard.ts`, `models/seller_dashboard_extended.ts`
+  -- Fixed :
   - [x] db/seed/seed_notification_data.ts
   - [x] db/seed/seed_seller_dashboard.ts
   - [x] db/seed/seed_settings_data.ts
@@ -62,4 +62,5 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
