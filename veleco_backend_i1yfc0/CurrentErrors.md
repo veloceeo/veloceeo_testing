@@ -35,7 +35,7 @@
   Affected files: `db/seed/seed_support_tickets.ts`, `lib/prisma.ts`, `models/cart.ts`, `models/cart_items.ts`, `models/notification_api.ts`, `models/notification_routes.ts`, `models/orders.ts`, `models/payment_api.ts`, `models/payment_routes.ts`, `models/products.ts`, `models/roles/admin.ts`, `models/roles/seller.ts`, `models/roles/user.ts`, `models/seller_cap.ts`, `models/settings_management_api.ts`, `models/settings_management_routes.ts`
 - `Could not find a declaration file for module 'bcrypt'`  
   File: `models/settings_management_api.ts`
-- Fixed :
+- Fixed ( Import Errors ):
   - [x] db/seed/seed_notification_data.ts
   - [x] db/seed/seed_seller_dashboard.ts
   - [x] db/seed/seed_settings_data.ts
@@ -71,6 +71,7 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
