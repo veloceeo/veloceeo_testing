@@ -42,9 +42,9 @@
   - [x] db/seed/seed_support_ticket_data.ts
   - [x] models/seller_dashboard.ts
   - [x] models/seller_dashboard_extended.ts
-  - [ ] lib/prisma.ts
-  - [ ] models/cart.ts
-  - [ ] models/cart_items.ts
+  - [x] lib/prisma.ts
+  - [x] models/cart.ts
+  - [x] models/cart_items.ts
   - [ ] models/notification_api.ts
   - [ ] models/notification_routes.ts
   - [ ] models/orders.ts
@@ -72,6 +72,7 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
