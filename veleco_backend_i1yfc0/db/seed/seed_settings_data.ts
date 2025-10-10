@@ -209,7 +209,7 @@ async function seedSettingsData() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     
     for (const seller of sellers) {
-      for (const store of seller.store as Store[]) {
+      for (const store of seller.store as store[]) {
         // Delete existing hours first
         await prisma.store_hours.deleteMany({
           where: { store_id: store.id }
@@ -284,6 +284,7 @@ if (require.main === module) {
 }
 
 export default seedSettingsData;
+
 
 
 
