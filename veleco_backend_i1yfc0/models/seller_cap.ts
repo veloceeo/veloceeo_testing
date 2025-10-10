@@ -1,6 +1,6 @@
 import express from "express"
-import {authSellerMiddleware} from "./auth/middleware"
-import { PrismaClient } from "../db/generated/prisma";
+import {authSellerMiddleware} from "./auth/middleware.js"
+import { PrismaClient } from "../db/generated/prisma/index.js";
 const prisma = new PrismaClient();
 const  route = express.Router();
 
@@ -115,4 +115,5 @@ route.delete("/delete-seller-cap/:id", authSellerMiddleware, async (req, res) =>
 });
 
 const sellerCap = route;
+
 export default sellerCap;
