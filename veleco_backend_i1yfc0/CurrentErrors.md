@@ -75,12 +75,17 @@
 ### 3. Express / Multer Type Incompatibility (TS2769 / TS2769)
 - Files: `models/store.ts`
 - Errors related to `RequestHandler`, `AuthRequest`, `files` property, and parameter type incompatibilities.
+- Fixed :
+  - [ ] RequestHandler
+  - [ ] AuthRequest
+  - [ ] files property
 
 ---
 
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
