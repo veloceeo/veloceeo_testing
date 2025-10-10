@@ -1,4 +1,4 @@
-import express, { Request } from "express";
+import express from "express";
 import cloudinary from "cloudinary";
 import { PrismaClient } from "../db/generated/prisma/index.js";
 import { authAdminMiddleware, authMiddleware } from "../models/auth/middleware.js";
@@ -68,7 +68,7 @@ const upload = multer({
 
 store.use(express.json());
 // Store Endpoints
-store.post("/create", authMiddleware, upload.single("file"), async (req: AuthRequest, res) => {
+store.post("/create", authMiddleware, upload.single("file"), async (req , res) => {
     try {
         const { name, address, phone, email, pan_number, adhar_number, gst_number, store_open, store_close, store_type } = req.body;
 
@@ -120,7 +120,7 @@ store.post("/create", authMiddleware, upload.single("file"), async (req: AuthReq
         res.status(500).json({ error: 'Failed to create store' });
     }
 });
-store.get("/", authAdminMiddleware, async (req: AuthRequest, res) => {
+store.get("/", authAdminMiddleware, async (req , res) => {
     const store = await prisma.store.findFirst({
         where: {
             user_id: req.userId
@@ -139,7 +139,7 @@ store.get("/", authAdminMiddleware, async (req: AuthRequest, res) => {
     })
     res.json({ message: "store fetched", store: store });
 })
-store.put("/update", authMiddleware, async (req: AuthRequest, res) => {
+store.put("/update", authMiddleware, async (req , res) => {
     const store = await prisma.store.findFirst({
         where: { user_id: req.userId as number }, select: {
             id: true,
@@ -172,7 +172,7 @@ store.put("/update", authMiddleware, async (req: AuthRequest, res) => {
     })
     res.json({ message: "store updated", store: updateStore.name });
 })
-store.delete("/delete", authMiddleware, async (req: AuthRequest, res) => {
+store.delete("/delete", authMiddleware, async (req , res) => {
     // First, find the store by user_id to get its id
     const storeToDelete = await prisma.store.findFirst({
         where: { user_id: req.userId as number },
@@ -189,7 +189,7 @@ store.delete("/delete", authMiddleware, async (req: AuthRequest, res) => {
 })
 
 // Route to upload multiple files
-store.post("/files", authMiddleware, upload.array('files', 5), async (req: AuthRequest, res) => {
+store.post("/files", authMiddleware, upload.array('files', 5), async (req , res) => {
     try {
         if (!req.files || req.files.length === 0) {
              res.status(400).json({ error: 'No files uploaded' });
@@ -232,7 +232,7 @@ store.post("/files", authMiddleware, upload.array('files', 5), async (req: AuthR
 });
 //Aadhar-card
 
-store.post("/file", authMiddleware, upload.single('file'), async (req: AuthRequest, res) => {
+store.post("/file", authMiddleware, upload.single('file'), async (req , res) => {
     try {
         if (!req.file) {
             res.status(400).json({ error: 'No file uploaded' });
@@ -295,7 +295,7 @@ store.post("/file", authMiddleware, upload.single('file'), async (req: AuthReque
 //Route For Pan Upload
 
 
-store.post("/pan", authMiddleware, upload.single('file'), async (req: AuthRequest, res) => {
+store.post("/pan", authMiddleware, upload.single('file'), async (req , res) => {
 
     try {
         if (!req.file) {
@@ -347,7 +347,7 @@ store.post("/pan", authMiddleware, upload.single('file'), async (req: AuthReques
 })
 
 // Route to delete file from Cloudinary
-store.delete("/file/:cloudinaryId", authMiddleware, async (req: AuthRequest, res) => {
+store.delete("/file/:cloudinaryId", authMiddleware, async (req , res) => {
     try {
         const { cloudinaryId } = req.params;
 
@@ -369,7 +369,7 @@ store.delete("/file/:cloudinaryId", authMiddleware, async (req: AuthRequest, res
 });
 
 // Route to get all files uploaded by the user
-store.get("/files", authMiddleware, async (req: AuthRequest, res) => {
+store.get("/files", authMiddleware, async (req , res) => {
     try {
         const store = await prisma.store.findFirst({
             where: { user_id: req.userId },
@@ -408,4 +408,5 @@ store.get("/files", authMiddleware, async (req: AuthRequest, res) => {
 )
 
 export default store;
+
 
