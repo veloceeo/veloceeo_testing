@@ -14,7 +14,7 @@
  *   ts-node seed_support_tickets.ts
  */
 
-import { seedSupportTicketData, cleanupSupportTicketData } from './seed_support_ticket_data';
+import { seedSupportTicketData, cleanupSupportTicketData } from './seed_support_ticket_data.js';
 
 async function main() {
   const command = process.argv[2];
@@ -59,5 +59,6 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
 
 export default main;
