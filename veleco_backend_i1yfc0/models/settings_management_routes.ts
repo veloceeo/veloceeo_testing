@@ -35,7 +35,7 @@ import {
   
   // Settings Overview
   getSettingsOverview
-} from './settings_management_api';
+} from './settings_management_api.js';
 
 const router = express.Router();
 
@@ -200,4 +200,5 @@ router.use((error: any, req: any, res: any, next: any) => {
   });
 });
 const settingsManagementRoutes = router;
+
 export default settingsManagementRoutes;
