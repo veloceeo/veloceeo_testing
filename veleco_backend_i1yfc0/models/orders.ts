@@ -1,6 +1,6 @@
 import express from "express";
-import { PrismaClient } from "../db/generated/prisma";
-import { authAdminMiddleware, authMiddleware } from "./auth/middleware";
+import { PrismaClient } from "../db/generated/prisma/index.js";
+import { authAdminMiddleware, authMiddleware } from "./auth/middleware.js";
 const order = express.Router();
 order.use(express.json());
 
@@ -134,5 +134,6 @@ order.post("/admin/order", authMiddleware, async (req, res) => {
         });
     }   
 });
+
 
 export default order;
