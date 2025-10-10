@@ -376,7 +376,7 @@ Product Team`,
       }
     ];
 
-    const createdTickets = [];
+    const createdTickets: any[] = [];
     for (const ticketData of sampleTickets) {
       const ticket = await prisma.support_ticket.create({
         data: ticketData
@@ -489,7 +489,7 @@ Product Team`,
       }
     ];
 
-    const createdResponses = [];
+    const createdResponses: any = [];
     for (const responseData of sampleResponses) {
       const response = await prisma.ticket_response.create({
         data: responseData
@@ -585,7 +585,7 @@ Product Team`,
       }
     ];
 
-    const createdEmailLogs = [];
+    const createdEmailLogs: any = [];
     for (const emailData of sampleEmailLogs) {
       const emailLog = await prisma.ticket_email_log.create({
         data: emailData
@@ -698,6 +698,7 @@ if (require.main === module) {
 
 
 export { seedSupportTicketData, cleanupSupportTicketData };
+
 
 
 
