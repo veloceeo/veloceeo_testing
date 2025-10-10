@@ -1,4 +1,4 @@
-import { PrismaClient, NotificationCategory, NotificationPriority, NotificationStatus } from '../generated/prisma.js';
+import { PrismaClient, NotificationCategory, NotificationPriority, NotificationStatus } from '../generated/prisma';
 
 const prisma = new PrismaClient();
 
@@ -441,3 +441,4 @@ if (require.main === module) {
 
 
 export default seedNotificationData;
+
