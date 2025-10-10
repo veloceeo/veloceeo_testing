@@ -1,6 +1,6 @@
 import express from 'express';
-import { PrismaClient, } from "../db/generated/prisma";
-import { authUserMiddleware } from './auth/middleware';
+import { PrismaClient, } from "../db/generated/prisma/index.js";
+import { authUserMiddleware } from './auth/middleware.js';
 import { 
     calculateCartTotal, 
     updateCartTotal, 
@@ -317,5 +317,6 @@ router.delete("/clear", authUserMiddleware, async (req, res): Promise<void> => {
     }
 });
 const cartRoutes = router
+
 
 export default cartRoutes;
