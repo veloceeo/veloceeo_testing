@@ -1,6 +1,6 @@
 import express from 'express';
 import { authSellerMiddleware } from './auth/middleware.js';
-import { PrismaClient } from '../db/generated/prisma.js';
+import { PrismaClient } from '../db/generated/prisma';
 
 const prisma = new PrismaClient();
 const sellerDashboard = express.Router();
@@ -1153,3 +1153,4 @@ sellerDashboard.get("/reports/export/pdf", authSellerMiddleware, async (req, res
 
 
 export default sellerDashboard;
+
