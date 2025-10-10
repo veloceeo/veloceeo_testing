@@ -1,6 +1,6 @@
 import express from 'express';
 import { authSellerMiddleware } from './auth/middleware.js';
-import { PrismaClient } from '../db/generated/prisma.js';
+import { PrismaClient } from '../db/generated/prisma';
 
 const prisma = new PrismaClient();
 const sellerDashboardExtended = express.Router();
@@ -722,3 +722,4 @@ sellerDashboardExtended.get("/actions/logs", authSellerMiddleware, async (req, r
 
 
 export default sellerDashboardExtended;
+
