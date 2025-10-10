@@ -203,7 +203,7 @@ Product Team`,
 
     // 3. Create sellers for testing (if they don't exist)
     console.log('👤 Creating test sellers...');
-    const supportUser = testUsers.find((u: user) => u.email === 'support@example.com');
+    const supportUser = testUsers.find((u: prisma.user) => u.email === 'support@example.com');
     if (!supportUser) throw new Error('Support user not found');
     
     const testSellers = await Promise.all([
@@ -698,6 +698,7 @@ if (require.main === module) {
 
 
 export { seedSupportTicketData, cleanupSupportTicketData };
+
 
 
 
