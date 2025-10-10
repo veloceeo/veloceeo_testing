@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient , Store , Seller } from '../generated/prisma';
 
 const prisma = new PrismaClient();
 
@@ -7,9 +7,9 @@ async function seedSettingsData() {
     console.log('🔧 Starting Settings & Management data seeding...');
 
     // Get existing sellers for seeding
-    const sellers = await prisma.seller.findMany({
-      include: { store: true }
-    });
+   const sellers: Seller[] = await prisma.seller.findMany({
+    include: { store: true }
+  });
 
     if (sellers.length === 0) {
       console.log('❌ No sellers found. Please run the main seed first.');
@@ -209,7 +209,7 @@ async function seedSettingsData() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     
     for (const seller of sellers) {
-      for (const store of seller.store) {
+      for (const store of seller.store as Store[]) {
         // Delete existing hours first
         await prisma.store_hours.deleteMany({
           where: { store_id: store.id }
@@ -217,7 +217,7 @@ async function seedSettingsData() {
 
         // Create new hours
         const storeHours = await Promise.all(
-          days.map((day, index) => 
+          days.map((day: string, index: number) => 
             prisma.store_hours.create({
               data: {
                 store_id: store.id,
@@ -284,6 +284,7 @@ if (require.main === module) {
 }
 
 export default seedSettingsData;
+
 
 
 
