@@ -1,5 +1,5 @@
 import {type Request, type Response } from 'express';
-import { PrismaClient } from '../db/generated/prisma';
+import { PrismaClient } from '../db/generated/prisma/index.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -1028,4 +1028,5 @@ export const getSettingsOverview = async (req: Request, res: Response) => {
     console.error('Error getting settings overview:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
+
 };
