@@ -1,4 +1,4 @@
-import { PrismaClient , Store , Seller } from '../generated/prisma/index.js';
+import { PrismaClient , store , seller } from '../generated/prisma/index.js';
 
 const prisma = new PrismaClient();
 
@@ -284,6 +284,7 @@ if (require.main === module) {
 }
 
 export default seedSettingsData;
+
 
 
 
