@@ -1,4 +1,4 @@
-import { PrismaClient, PaymentStatus, SettlementStatus, PaymentMethod } from '../db/generated/prisma';
+import { PrismaClient, PaymentStatus, SettlementStatus, PaymentMethod } from '../db/generated/prisma/index.js';
 import type { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
@@ -767,4 +767,5 @@ export const getPaymentSummaryByMethod = async (req: Request, res: Response) => 
   } catch (error) {
     return handleError(error, res);
   }
+
 };
