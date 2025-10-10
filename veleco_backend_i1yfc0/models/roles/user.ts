@@ -1,5 +1,5 @@
 import express from "express"
-import { PrismaClient, } from "../../db/generated/prisma";
+import { PrismaClient, } from "../../db/generated/prisma/index.js";
 import jwt from "jsonwebtoken"
 import * as OTPAuth from "otpauth";
 import z from "zod";
@@ -205,5 +205,6 @@ user.post("/logout", async (req, res) => {
         console.log("Error during logout:", error);
     }
 });
+
 
 export default user;
