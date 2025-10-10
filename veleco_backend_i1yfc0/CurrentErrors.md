@@ -45,8 +45,8 @@
   - [x] lib/prisma.ts
   - [x] models/cart.ts
   - [x] models/cart_items.ts
-  - [ ] models/notification_api.ts
-  - [ ] models/notification_routes.ts
+  - [x] models/notification_api.ts
+  - [x] models/notification_routes.ts
   - [ ] models/orders.ts
   - [ ] models/payment_api.ts
   - [ ] models/roles/user.ts
@@ -72,6 +72,7 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
