@@ -7,9 +7,57 @@ async function seedSettingsData() {
     console.log('🔧 Starting Settings & Management data seeding...');
 
     // Get existing sellers for seeding
-    const sellers = await prisma.seller.findMany({
-      include: { store: true }
+    import { PrismaClient, Seller, Store } from '../db/generated/prisma/index.js';
+
+const prisma = new PrismaClient();
+
+export async function seedSettingsData(): Promise<void> {
+  try {
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+
+    // Fetch all sellers including their stores
+    const sellers: (Seller & { store: Store[] })[] = await prisma.seller.findMany({
+      include: { store: true },
     });
+
+    // Loop through sellers and their stores
+    for (const seller of sellers) {
+      for (const store of seller.store) {
+        // Create store hours for each day of the week
+        const storeHours = await Promise.all(
+          days.map((day: string, index: number) =>
+            prisma.store_hours.create({
+              data: {
+                day,
+                open_time: index === 6 ? null : '09:00',
+                close_time: index === 6 ? null : '21:00',
+                is_closed: index === 6,
+                store_id: store.id,
+              },
+            })
+          )
+        );
+
+        console.log(`✅ Created store hours for store ID: ${store.id}`);
+      }
+    }
+
+    console.log('🎉 Store hours seeded successfully.');
+  } catch (error) {
+    console.error('❌ Error seeding store hours:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 
     if (sellers.length === 0) {
       console.log('❌ No sellers found. Please run the main seed first.');
@@ -217,7 +265,7 @@ async function seedSettingsData() {
 
         // Create new hours
         const storeHours = await Promise.all(
-          days.map((day, index) => 
+          days.map((day: string, index: number) => 
             prisma.store_hours.create({
               data: {
                 store_id: store.id,
@@ -285,5 +333,6 @@ if (require.main === module) {
 
 
 export default seedSettingsData;
+
 
 
