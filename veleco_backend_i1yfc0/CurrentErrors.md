@@ -49,10 +49,10 @@
   - [x] models/notification_routes.ts
   - [x] models/orders.ts
   - [x] models/payment_api.ts
-  - [ ] models/roles/user.ts
-  - [ ] models/seller_cap.ts
+  - [x] models/roles/user.ts
+  - [x] models/seller_cap.ts
   - [ ] models/settings_management_api.ts
-  - [ ] models/settings_management_routes.ts
+  - [x] models/settings_management_routes.ts
   - [ ] models/settings_management_api.ts
 
 ---
@@ -72,6 +72,7 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
