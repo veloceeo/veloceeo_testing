@@ -7,7 +7,7 @@ async function seedSettingsData() {
     console.log('🔧 Starting Settings & Management data seeding...');
 
     // Get existing sellers for seeding
-   const sellers: seller = await prisma.seller.findMany({
+   const sellers = await prisma.seller.findMany({
     include: { store: true }
   });
 
@@ -284,6 +284,7 @@ if (require.main === module) {
 }
 
 export default seedSettingsData;
+
 
 
 
