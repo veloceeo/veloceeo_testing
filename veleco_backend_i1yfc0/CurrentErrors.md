@@ -59,6 +59,16 @@
 ### 2. Implicit `any` Type Errors (TS7006)
 - Seed files: `db/seed/seed_settings_data.ts`, `db/seed/seed_support_ticket_data.ts`
 - Model files: `models/cart.ts`, `models/cart_items.ts`, `models/notification_api.ts`, `models/payment_routes.ts`, `models/seller_dashboard.ts`, `models/seller_dashboard_extended.ts`, `models/settings_management_api.ts`
+- Fixed :
+  - [x] db/seed/seed_settings_data.ts
+  - [ ] db/seed/seed_support_ticket_data.ts
+  - [ ] models/cart.ts
+  - [ ] models/cart_items.ts
+  - [ ] models/notification_api.ts
+  - [ ] models/payment_routes.ts
+  - [ ] models/seller_dashboard.ts
+  - [ ] models/seller_dashboard_extended.ts
+  - [ ] models/settings_management_api.ts
 
 ---
 
@@ -71,6 +81,7 @@
 ### 4. Miscellaneous Errors
 - Type overload mismatches: `models/store.ts`  
 - Other TypeScript errors related to function parameters, request handlers, and module resolutions.
+
 
 
 
