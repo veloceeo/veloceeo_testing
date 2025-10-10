@@ -1,7 +1,7 @@
 import express from 'express';
-import { authMiddleware } from './auth/middleware';
+import { authMiddleware } from './auth/middleware.js';
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { PrismaClient } from '../db/generated/prisma';
+import { PrismaClient } from '../db/generated/prisma/index.js';
 
 const prisma = new PrismaClient().$extends(withAccelerate())
 const cart_items = express.Router();
@@ -546,5 +546,6 @@ cart_items.get("/product/:productId", authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch cart items by product' });
     }
 });
+
 
 export default cart_items;
