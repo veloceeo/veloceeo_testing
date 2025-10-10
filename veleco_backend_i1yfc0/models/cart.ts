@@ -8,7 +8,7 @@ import {
     getOrCreateActiveCart,
     safeNumberConversion,
     validateRequiredFields 
-} from '../utils/cartUtils';
+} from '../utils/cartUtils.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -320,3 +320,4 @@ const cartRoutes = router
 
 
 export default cartRoutes;
+
