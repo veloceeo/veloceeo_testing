@@ -23,7 +23,7 @@ import {
   createPaymentNotification,
   createPromotionNotification,
   cleanupExpiredNotifications
-} from './notification_api';
+} from './notification_api.js';
 
 const router = Router();
 
@@ -337,4 +337,5 @@ router.use((error: any, req: any, res: any, next: any) => {
   return res.status(500).json({ error: 'Internal server error' });
 });
 const notification = router;
+
 export default notification;
