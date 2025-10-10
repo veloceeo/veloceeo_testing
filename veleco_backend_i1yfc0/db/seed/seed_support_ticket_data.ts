@@ -1,4 +1,4 @@
-import { PrismaClient, TicketCategory, TicketPriority, TicketStatus } from '../generated/prisma';
+import { PrismaClient, TicketCategory, TicketPriority, TicketStatus } from '../generated/prisma/index.js';
 
 const prisma = new PrismaClient();
 
@@ -695,4 +695,5 @@ if (require.main === module) {
 
 
 export { seedSupportTicketData, cleanupSupportTicketData };
+
 
