@@ -8,10 +8,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Custom Request interface to include properties from middleware
-interface AuthRequest extends Request {
+/**interface AuthRequest extends Request {
     userId?: number;
     file?: Express.Multer.File;
     files?: Express.Multer.File[];
+}**/
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: number;
+      file?: Multer.File;
+      files?: Multer.File[];
+    }
+  }
 }
 
 const store = express.Router();
@@ -399,3 +408,4 @@ store.get("/files", authMiddleware, async (req: AuthRequest, res) => {
 )
 
 export default store;
+
