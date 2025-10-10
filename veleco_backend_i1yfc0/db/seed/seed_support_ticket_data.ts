@@ -272,7 +272,7 @@ Product Team`,
       // Customer tickets
       {
         ticket_number: generateTicketNumber(1),
-        user_id: testUsers.find(u => u.email === 'customer1@example.com')?.id,
+        user_id: testUsers.find((u: user)=> u.email === 'customer1@example.com')?.id,
         subject: 'Unable to complete payment for order',
         description: 'I am trying to purchase a laptop but the payment keeps failing. I have tried multiple credit cards but none of them work. The error message says "Payment processing failed" but doesn\'t give more details.',
         category: 'PAYMENT' as TicketCategory,
@@ -291,7 +291,7 @@ Product Team`,
       },
       {
         ticket_number: generateTicketNumber(2),
-        user_id: testUsers.find(u => u.email === 'customer2@example.com')?.id,
+        user_id: testUsers.find((u:user) => u.email === 'customer2@example.com')?.id,
         subject: 'Product received damaged',
         description: 'I ordered a smartphone last week and it arrived today with a cracked screen. The packaging seemed fine but the phone was clearly damaged. I need a replacement or refund.',
         category: 'PRODUCT' as TicketCategory,
@@ -312,7 +312,7 @@ Product Team`,
       },
       {
         ticket_number: generateTicketNumber(3),
-        user_id: testUsers.find(u => u.email === 'customer1@example.com')?.id,
+        user_id: testUsers.find((u: user) => u.email === 'customer1@example.com')?.id,
         subject: 'Account locked after multiple login attempts',
         description: 'My account has been locked after I forgot my password and tried logging in multiple times. I need help unlocking it and resetting my password.',
         category: 'ACCOUNT' as TicketCategory,
@@ -415,7 +415,7 @@ Product Team`,
         author_type: 'customer',
         author_name: 'Bob Wilson',
         author_email: 'customer2@example.com',
-        author_id: testUsers.find(u => u.email === 'customer2@example.com')?.id?.toString(),
+        author_id: testUsers.find((u:user) => u.email === 'customer2@example.com')?.id?.toString(),
         attachments: JSON.stringify([
           { filename: 'damaged_screen_1.jpg', url: '/uploads/tickets/damaged_screen_1.jpg' },
           { filename: 'damaged_screen_2.jpg', url: '/uploads/tickets/damaged_screen_2.jpg' }
@@ -445,7 +445,7 @@ Product Team`,
         author_type: 'customer',
         author_name: 'Alice Johnson',
         author_email: 'customer1@example.com',
-        author_id: testUsers.find(u => u.email === 'customer1@example.com')?.id?.toString(),
+        author_id: testUsers.find((u:user)=> u.email === 'customer1@example.com')?.id?.toString(),
         created_at: currentDate,
         updated_at: currentDate
       },
@@ -628,11 +628,14 @@ Product Team`,
     console.log('═══════════════════════════════════════════════════');
     
     console.log('\n📊 Ticket Status Summary:');
-    const statusCounts = createdTickets.reduce((acc, ticket) => {
-      acc[ticket.status] = (acc[ticket.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const statusCounts = createdTickets.reduce(
+    (acc: Record<string, number>, ticket: { status: string }) => {
+    acc[ticket.status] = (acc[ticket.status] || 0) + 1;
+    return acc;
+    },
+    {}
+  );
+
     Object.entries(statusCounts).forEach(([status, count]) => {
       console.log(`   ${status}: ${count} tickets`);
     });
@@ -695,6 +698,7 @@ if (require.main === module) {
 
 
 export { seedSupportTicketData, cleanupSupportTicketData };
+
 
 
 
