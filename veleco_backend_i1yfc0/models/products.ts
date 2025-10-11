@@ -1,7 +1,7 @@
 import express from "express";
 import cloudinary, { UploadStream } from "cloudinary";
-import { PrismaClient } from "../db/generated/prisma";
-import { authUserMiddleware } from "./auth/middleware";
+import { PrismaClient } from "../db/generated/prisma/index.js";
+import { authUserMiddleware } from "./auth/middleware.js";
 
 const product = express.Router();
 const prisma = new PrismaClient()
@@ -145,6 +145,7 @@ product.delete("/:name", authUserMiddleware, async (req, res) => {
     }
 
 })
+
 
 
 export default product;
