@@ -17,11 +17,12 @@ declare global {
   namespace Express {
     interface Request {
       userId?: any;
-      file?: Multer.File;
-      files?: Multer.File[];
+      file?: Express.Multer.File;
+      files?: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[];
     }
   }
 }
+
 
 const store = express.Router();
 const prisma = new PrismaClient();
@@ -408,6 +409,7 @@ store.get("/files", authMiddleware, async (req , res) => {
 )
 
 export default store;
+
 
 
 
