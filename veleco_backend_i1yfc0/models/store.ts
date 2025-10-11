@@ -16,7 +16,7 @@ dotenv.config();
 declare global {
   namespace Express {
     interface Request {
-      userId?: number;
+      userId?: any;
       file?: Multer.File;
       files?: Multer.File[];
     }
@@ -408,5 +408,6 @@ store.get("/files", authMiddleware, async (req , res) => {
 )
 
 export default store;
+
 
 
