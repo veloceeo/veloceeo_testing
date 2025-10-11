@@ -1,5 +1,5 @@
 import express from "express";
-import { PrismaClient } from "../../db/generated/prisma";
+import { PrismaClient } from "../../db/generated/prisma/index.js";
 import z from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -673,6 +673,7 @@ admin.put("/change-email", authAdminMiddleware, async (req, res) => {
         res.status(500).json({ error: "Failed to change email" });
     }
 });
+
 
 
 export default admin;
