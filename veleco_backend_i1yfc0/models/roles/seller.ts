@@ -1,10 +1,10 @@
 import express from "express"
-import { PrismaClient } from "../../db/generated/prisma"
+import { PrismaClient } from "../../db/generated/prisma/index.js"
 import z from "zod"
 import * as OTPAuth from "otpauth";
 import { otpSchema } from "./user";
 import jwt from "jsonwebtoken";
-import { authSellerMiddleware } from "../auth/middleware";
+import { authSellerMiddleware } from "../auth/middleware.js";
 const seller = express.Router()
 
 seller.use(express.json());
@@ -251,6 +251,7 @@ seller.delete("/delete-account", authSellerMiddleware, async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 
 
