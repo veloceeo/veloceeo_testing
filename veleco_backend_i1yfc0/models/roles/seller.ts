@@ -2,7 +2,7 @@ import express from "express"
 import { PrismaClient } from "../../db/generated/prisma/index.js"
 import z from "zod"
 import * as OTPAuth from "otpauth";
-import { otpSchema } from "./user";
+import { otpSchema } from "./user.js";
 import jwt from "jsonwebtoken";
 import { authSellerMiddleware } from "../auth/middleware.js";
 const seller = express.Router()
@@ -256,3 +256,4 @@ seller.delete("/delete-account", authSellerMiddleware, async (req, res) => {
 
 
 export default seller ;
+
