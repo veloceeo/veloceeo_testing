@@ -1,4 +1,4 @@
-import { PrismaClient } from "../db/generated/prisma";
+import { PrismaClient } from "../db/generated/prisma/index.js";
 
 const prisma = new PrismaClient();
 
@@ -158,4 +158,5 @@ export function validateRequiredFields(body: any, requiredFields: string[]): { i
         isValid: missingFields.length === 0,
         missingFields
     };
+
 }
