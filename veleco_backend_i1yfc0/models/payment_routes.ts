@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { PrismaClient } from '../db/generated/prisma';
+import { PrismaClient } from '../db/generated/prisma/index.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -1016,5 +1016,6 @@ async function updateSellerBalanceAfterPayment(seller_id: number, store_id: numb
     console.error('Error updating seller balance:', error);
   }
 }
+
 
 export default router;
