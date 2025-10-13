@@ -1,4 +1,4 @@
-# Veleco Backend — API Documentation
+# Veleceeo Backend — API Documentation
 
 This document consolidates all HTTP APIs in the repository, grouped by category. Each section lists the route prefix, endpoints (method + path), the handler file or function, required inputs, and a short description of behavior.
 
@@ -335,4 +335,5 @@ Functionality grouped in routes file — exported functions implemented in the A
 - Payment and notification logic: `models/payment_api.ts`, `models/notification_api.ts`.
 
 ---
+
 
